@@ -31,6 +31,11 @@ nextback 是下一代 ACM Homepage 后端。使用 Nest.js 框架（一种 TypeS
 
 每一个模组都是一个文件夹，并包含了 `index.ts` 来作为模组的入口。同级的还有 `*.service.ts` 和 `*.resolve.ts`，用于处理数据库中的数据，和 GraphQL。
 
+其中 `*.service.ts` 专注于和数据库打交道，而 `*.resolver.ts` 则需要处理：
+
+- 调用 `*.service.ts` 的接口来返回数据。
+- 调用 `utils/` 下的相关函数，来进行权限验证、解析 Cookie 和设置 HTTPOnly Cookie。
+
 ### Entitys
 
 我们知道 `src/entitys` 用于定义所有实体。而涉及到实体的操作总结下来就四个：
@@ -49,10 +54,28 @@ nextback 是下一代 ACM Homepage 后端。使用 Nest.js 框架（一种 TypeS
 
 TODO：我们可以修改 `create` 方法的类型声明使得它强制只接受 `build` 返回的类型吗？
 
-## 命名规范
+## 命名规范和抽象级别
 
 所有字段均采用驼峰命名法。其中类型用大写字母开头，而其他的用小写类型。
 
 ### GraphQL
 
 对于 Query，我们一般会查询单数个对象或者复数个对象。我们将其命名为单纯的名词。其中由于英语单词并不说所有都具有单数复数形式我们：让单数的对象保持单数，让复数的对象保持末尾增加 `List` 后缀的约定。（比如新闻 news 没有复数形式，我们如果想要得到 news 数组的话，则我们需要将其命名为 `newsList`。
+
+比如我们可以用于 Query 的名字有：
+
+- `newsList`；
+- `tagList`；
+- `newsListByTag`。
+
+而可以用于 Mutation 的名字有：
+
+- `addTagToNews`；
+- `removeTagFromNews`；
+- `createUser`。
+
+此外，我们知道在 GraphQL 中我们可以用 `input` 类型来减少参数的个数，但是这并非是银弹，我们也应该避免不必要的 `input` 类型，除了：
+
+- 我们的确可以把它抽象成 **一个** 对象。比如说我们尝试新建一个新闻，那么我们可以把构成新闻的字段们抽象成一个 `input`。
+
+在这里，我们约定新建对象的时候，使用 `input` 这种 GraphQL 类型，且 GraphQL 参数名也为 `input`。
