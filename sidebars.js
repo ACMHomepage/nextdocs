@@ -23,6 +23,7 @@ const sidebars = {
       },
       items: [
         '架构/nextback',
+        '架构/爬虫接口',
       ],
     },
   ],
